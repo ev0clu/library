@@ -1,0 +1,7 @@
+node_modules
+package.lock.json
+build
+
+# Ignore all HTML and CSS files:
+*.html
+*.css
