@@ -15,9 +15,29 @@
         <h1>Library</h1>
     </header>
     <main>
-        <div class="btn">
-            <button><span class="material-symbols-outlined">add</span>Add book</button>
+        <div class="btn-add-container">
+            <button id="btn-add"><span class="material-symbols-outlined">add</span>Add book</button>
         </div>
+        <section id="popup">
+            <button id="btn-close"><span class="material-symbols-outlined">close</span></button>
+            <div id="popup-content">
+                <p class="form-title">Add new book</p>
+                <form class="form-content">
+                    <div class="data-container">
+                        <input type="text" id="title" placeholder="Title" required>
+                        <input type="text" id="author" placeholder="Author" required>
+                        <input type="number" id="pages" placeholder="Pages" required>
+                        <div class="data">
+                            <label for="read">Have you already read it?</label>
+                            <input type="checkbox" id="read">
+                        </div>
+                    </div>
+                    <div class="btn-submit-container">
+                        <button id="btn-submit" type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </section>
         <div class="content"></div>
     </main>
     <footer class="footer">
