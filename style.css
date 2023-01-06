@@ -52,6 +52,7 @@ table {
 }
 /* --- Reset end --- */
 
+
 :root {
     --body-color: #fafafa;
     --header-color: #f8fafc;
@@ -125,6 +126,7 @@ main {
 }
 
 #btn-add:hover {
+    cursor: pointer;
     background-color: var(--button-add-color-hover);
 }
 
@@ -174,6 +176,7 @@ main {
 }
 
 
+/* ------- Pop Up content ------- */
 
 #popup {
     display: none; /* Hide the pop-up by default */
@@ -189,7 +192,6 @@ main {
 }
   
 #popup-content {
-    /*text-align: center; /* Center the content of the pop-up */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -212,6 +214,7 @@ main {
 }
 
 #btn-close .material-symbols-outlined:hover {
+    cursor: pointer;
     color: #e11d48;
 }
 
@@ -247,10 +250,13 @@ main {
     font-weight: 600;
 }
 
-
 input[type="checkbox"] {
     height: 25px;
     width: 25px;
+}
+
+input[type="checkbox"]:hover {
+    cursor: pointer;
 }
 
 input[type="checkbox"]:checked {
@@ -287,6 +293,7 @@ input {
 }
 
 #btn-submit:hover {
+    cursor: pointer;
     background-color: var(--button-submit-color-hover);
 }
 
