@@ -223,7 +223,7 @@ main {
     font-weight: 600;
 }
 
-.form-content {
+#form-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
