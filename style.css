@@ -273,6 +273,7 @@ main {
 .form-title {
     font-size: 1.6rem;
     font-weight: 600;
+    padding-bottom: 1rem;
 }
 
 #form-content {
@@ -298,7 +299,6 @@ main {
 }
 
 .data label {
-    font-size: 1.2rem;
     font-weight: 600;
 }
 
@@ -321,6 +321,16 @@ input {
     padding: 8px;
     border-radius: 4px;
     font-size: 1.3rem;
+}
+
+.warning-content {
+    height: 0.8rem;
+}
+
+#warning  {
+    color: red;
+    font-size: 0.8;
+    font-weight: 700;
 }
 
 .btn-submit-container {

@@ -10,6 +10,7 @@ const form = document.getElementById('form-content');
 const popUpMenu = document.getElementById('modal');
 
 const content = document.getElementById('content');
+const warning = document.getElementById('warning');
 
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
@@ -92,6 +93,7 @@ function openPopUp() {
 function closePopUp() {
     popUpMenu.style.display = 'none';
     form.reset();
+    warning.textContent = '';
     header.classList.remove('inactive');
     main.classList.remove('inactive');
     footer.classList.remove('inactive');
@@ -99,6 +101,17 @@ function closePopUp() {
 
 function resetBookContent() {
     content.textContent = '';
+}
+
+function getTheTitles(library) {
+    return library.map((book) => book.title);
+}
+
+function isExistBook(newBook) {
+    let isExist = false;
+    const booksTitle = getTheTitles(myLibrary);
+    isExist = booksTitle.some((title) => title === newBook.title);
+    return isExist;
 }
 
 // --------- Event listeners --------- //
@@ -119,8 +132,15 @@ form.addEventListener('submit', (event) => {
     // button does not let to 'submit' the page
     event.preventDefault();
     const newBook = getBookInputs();
-    addBookToLibrary(newBook);
-    closePopUp();
+
+    if (isExistBook(newBook)) {
+        warning.textContent = 'Already exist in the library';
+        console.log('error');
+    } else {
+        console.log('false');
+        addBookToLibrary(newBook);
+        closePopUp();
+    }
 });
 /*
 const readButton = document.querySelectorAll('#btn-read');
