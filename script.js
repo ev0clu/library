@@ -26,8 +26,45 @@ function Book(title, author, pages, isRead) {
     this.isRead = isRead;
 }
 
-// Prototype of Book's constructor
-Book.prototype.crea = function () {};
+function getBookInputs() {
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const pages = document.getElementById('pages').value;
+    const isRead = document.getElementById('read').checked;
+    const newBook = new Book(title, author, pages, isRead);
+    return newBook;
+}
+
+function addBookToLibrary(book) {
+    myLibrary.push(book);
+    updateBookCards(myLibrary);
+}
+
+function updateBookCards(library) {
+    resetContentField();
+    library.forEach((indexedBook) => {
+        createBookCard(indexedBook);
+    });
+    toggleStatus();
+}
+
+function toggleStatus() {
+    const readButton = document.querySelectorAll('#btn-read');
+    readButton.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const card = event.target.parentNode;
+            if (card.classList.contains('card-read')) {
+                card.removeAttribute('class', 'card-read');
+                card.setAttribute('class', 'card card-unread');
+                button.textContent = 'Mark as read';
+            } else {
+                card.removeAttribute('class', 'card-unread');
+                card.setAttribute('class', 'card card-read');
+                button.textContent = 'Mark as unread';
+            }
+        });
+    });
+}
 
 function createBookCard(book) {
     const addCard = document.createElement('div');
@@ -44,10 +81,10 @@ function createBookCard(book) {
     isReadButton.setAttribute('id', 'btn-read');
 
     if (book.isRead) {
-        addCard.setAttribute('class', 'card card-read');
+        addCard.setAttribute('class', `card card-read`);
         isReadButton.textContent = 'Mark as unread';
     } else {
-        addCard.setAttribute('class', 'card card-unread');
+        addCard.setAttribute('class', `card card-unread`);
         isReadButton.textContent = 'Mark as read';
     }
 
@@ -60,27 +97,6 @@ function createBookCard(book) {
     addCard.appendChild(cardPages);
     addCard.appendChild(isReadButton);
     addCard.appendChild(removeCardButton);
-}
-
-function getBookInputs() {
-    const title = document.getElementById('title').value;
-    const author = document.getElementById('author').value;
-    const pages = document.getElementById('pages').value;
-    const isRead = document.getElementById('read').checked;
-    const newBook = new Book(title, author, pages, isRead);
-    return newBook;
-}
-
-function addBookToLibrary(book) {
-    myLibrary.push(book);
-    updateBookCards(myLibrary);
-}
-
-function updateBookCards(library) {
-    resetBookContent();
-    library.forEach((indexBook) => {
-        createBookCard(indexBook);
-    });
 }
 
 function openPopUp() {
@@ -99,7 +115,7 @@ function closePopUp() {
     footer.classList.remove('inactive');
 }
 
-function resetBookContent() {
+function resetContentField() {
     content.textContent = '';
 }
 
@@ -135,29 +151,8 @@ form.addEventListener('submit', (event) => {
 
     if (isExistBook(newBook)) {
         warning.textContent = 'Already exist in the library';
-        console.log('error');
     } else {
-        console.log('false');
         addBookToLibrary(newBook);
         closePopUp();
     }
 });
-/*
-const readButton = document.querySelectorAll('#btn-read');
-const cards = document.querySelectorAll('.card');
-
-readButton.forEach((button) => {
-    button.addEventListener('click', () => {
-        if (cards.classList.contains('card-read')) {
-            cards.removeAttribute('class', 'card-read');
-            cards.setAttribute('class', 'card-unread');
-            readCardButton.textContent = 'Mark as read';
-        } else {
-            cards.removeAttribute('class', 'card card-unread');
-            cards.setAttribute('class', 'card card-read');
-            readCardButton.textContent = 'Mark as unread';
-        }
-
-        console.log('ASD');
-    });
-});*/
