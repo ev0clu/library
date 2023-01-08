@@ -97,7 +97,6 @@ header > h1 {
 }
 
 main {
-   border: 2px solid red;
    display: flex;
    flex-direction: column;
 }
@@ -148,6 +147,54 @@ main {
     font-size: 1.8rem;
 }
 
+#content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 3rem;
+    padding: 0 4rem 1.5rem 4rem;
+}
+
+.card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 0 2rem 0;
+}
+
+.card-unread {
+    background-color: #fca5a5;
+}
+
+.card-read {
+    background-color: #bbf7d0;
+}
+
+.card h1 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.card p {
+    font-size: 1.5rem;
+}
+
+#btn-read {
+    margin-top: 2rem;
+}
+
+#btn-read,
+#btn-remove {
+    height: 3rem;
+    width: 12rem;
+}
+
+
 .footer {
    /* position: absolute;
     bottom: 0;*/
@@ -178,7 +225,12 @@ main {
 
 /* ------- Pop Up content ------- */
 
-#popup {
+.inactive {
+    pointer-events: none;
+    background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
+}
+
+#modal {
     display: none; /* Hide the pop-up by default */
     position: fixed; /* Position the pop-up fixed on the screen */
     top: 50%; /* Position the pop-up vertically centered */
@@ -191,7 +243,7 @@ main {
     border-radius: 8px;
 }
   
-#popup-content {
+#modal-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -278,7 +330,9 @@ input {
     justify-content: center;
 }
 
-#btn-submit {
+#btn-submit,
+#btn-read,
+#btn-remove {
     border: none;
     display: flex;
     justify-content: center;
@@ -288,15 +342,22 @@ input {
     color: white;
     background-color: var(--button-submit-color);
     border-radius: 8px;
+}
+
+#btn-submit {
     width: 10rem;
     height: 2.5rem;
 }
 
-#btn-submit:hover {
+#btn-submit:hover,
+#btn-read:hover,
+#btn-remove:hover {
     cursor: pointer;
     background-color: var(--button-submit-color-hover);
 }
 
-#btn-submit:active {
+#btn-submit:active,
+#btn-read:active,
+#btn-remove:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }

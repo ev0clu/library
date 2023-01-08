@@ -5,60 +5,139 @@ let myLibrary = [];
 // --------- Document methods --------- //
 const addButton = document.getElementById('btn-add');
 const closeButton = document.getElementById('btn-close');
-const form = document.getElementById('form-content');
-const popUpMenu = document.getElementById('popup');
 
-const title = document.getElementById('title');
-const author = document.getElementById('author');
-const pages = document.getElementById('pages');
-const read = document.getElementById('read');
+const form = document.getElementById('form-content');
+const popUpMenu = document.getElementById('modal');
+
+const content = document.getElementById('content');
+
+const header = document.querySelector('.header');
+const main = document.querySelector('.main');
+const footer = document.querySelector('.footer');
 
 // --------- Functions declaration  --------- //
 
-function Book(titleValue, authorValue, pagesValue, readValue) {
-    // the constructor...
-    this.titleValue = titleValue;
-    this.authorValue = authorValue;
-    this.pagesValue = pagesValue;
-    this.readValue = readValue;
+// Constructor
+function Book(title, author, pages, isRead) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.isRead = isRead;
 }
 
-Book.prototype.bookInfo = function () {
-    console.log(this.titleValue, this.authorValue, this.pagesValue, this.readValue);
-};
+// Prototype of Book's constructor
+Book.prototype.crea = function () {};
 
-function addBookToLibrary() {
-    // do stuff here
+function createBookCard(book) {
+    const addCard = document.createElement('div');
+    const cardTitle = document.createElement('h1');
+    const cardAuthor = document.createElement('p');
+    const cardPages = document.createElement('p');
+    const isReadButton = document.createElement('button');
+    const removeCardButton = document.createElement('button');
+
+    cardTitle.textContent = `${book.title}`;
+    cardAuthor.textContent = `${book.author}`;
+    cardPages.textContent = `${book.pages} pages read`;
+
+    isReadButton.setAttribute('id', 'btn-read');
+
+    if (book.isRead) {
+        addCard.setAttribute('class', 'card card-read');
+        isReadButton.textContent = 'Mark as unread';
+    } else {
+        addCard.setAttribute('class', 'card card-unread');
+        isReadButton.textContent = 'Mark as read';
+    }
+
+    removeCardButton.setAttribute('id', 'btn-remove');
+    removeCardButton.textContent = 'Remove';
+
+    content.appendChild(addCard);
+    addCard.appendChild(cardTitle);
+    addCard.appendChild(cardAuthor);
+    addCard.appendChild(cardPages);
+    addCard.appendChild(isReadButton);
+    addCard.appendChild(removeCardButton);
 }
 
-function resetPopUp() {
+function getBookInputs() {
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const pages = document.getElementById('pages').value;
+    const isRead = document.getElementById('read').checked;
+    const newBook = new Book(title, author, pages, isRead);
+    return newBook;
+}
+
+function addBookToLibrary(book) {
+    myLibrary.push(book);
+    updateBookCards(myLibrary);
+}
+
+function updateBookCards(library) {
+    resetBookContent();
+    library.forEach((indexBook) => {
+        createBookCard(indexBook);
+    });
+}
+
+function openPopUp() {
+    popUpMenu.style.display = 'block';
+    header.classList.add('inactive');
+    main.classList.add('inactive');
+    footer.classList.add('inactive');
+}
+
+function closePopUp() {
     popUpMenu.style.display = 'none';
-    title.value = '';
-    author.value = '';
-    pages.value = '';
-    read.checked = false;
+    form.reset();
+    header.classList.remove('inactive');
+    main.classList.remove('inactive');
+    footer.classList.remove('inactive');
+}
+
+function resetBookContent() {
+    content.textContent = '';
 }
 
 // --------- Event listeners --------- //
 
 // Pressed 'Add button' open the Pop up menu
 addButton.addEventListener('click', () => {
-    popUpMenu.style.display = 'block';
+    openPopUp();
 });
 
 // Pressed 'Close button' close the Pop up menu
 closeButton.addEventListener('click', () => {
-    resetPopUp();
+    closePopUp();
 });
 
-// Pressed 'Submit button' send book infos
+// Pressed 'Submit button' sends book info
 form.addEventListener('submit', (event) => {
     // default button action should not be taken
     // button does not let to 'submit' the page
     event.preventDefault();
-    console.log(title.value, author.value, pages.value, read.checked);
-    const newBook = new Book(title.value, author.value, pages.value, read.checked);
-    newBook.bookInfo();
-
-    resetPopUp();
+    const newBook = getBookInputs();
+    addBookToLibrary(newBook);
+    closePopUp();
 });
+/*
+const readButton = document.querySelectorAll('#btn-read');
+const cards = document.querySelectorAll('.card');
+
+readButton.forEach((button) => {
+    button.addEventListener('click', () => {
+        if (cards.classList.contains('card-read')) {
+            cards.removeAttribute('class', 'card-read');
+            cards.setAttribute('class', 'card-unread');
+            readCardButton.textContent = 'Mark as read';
+        } else {
+            cards.removeAttribute('class', 'card card-unread');
+            cards.setAttribute('class', 'card card-read');
+            readCardButton.textContent = 'Mark as unread';
+        }
+
+        console.log('ASD');
+    });
+});*/
