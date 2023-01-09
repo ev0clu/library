@@ -133,10 +133,8 @@ function closePopUp() {
 }
 
 function isExistBook(newBook) {
-    let isExist = false;
     const booksTitle = getTheTitles(myLibrary);
-    isExist = booksTitle.some((title) => title === newBook.title);
-    return isExist;
+    return booksTitle.some((title) => title === newBook.title);
 }
 
 function getTheTitles(library) {
