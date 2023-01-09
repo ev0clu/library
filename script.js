@@ -45,25 +45,12 @@ function updateBookCards(library) {
     library.forEach((indexedBook) => {
         createBookCard(indexedBook);
     });
+    removeCard();
     toggleStatus();
 }
 
-function toggleStatus() {
-    const readButton = document.querySelectorAll('#btn-read');
-    readButton.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            const card = event.target.parentNode;
-            if (card.classList.contains('card-read')) {
-                card.removeAttribute('class', 'card-read');
-                card.setAttribute('class', 'card card-unread');
-                button.textContent = 'Mark as read';
-            } else {
-                card.removeAttribute('class', 'card-unread');
-                card.setAttribute('class', 'card card-read');
-                button.textContent = 'Mark as unread';
-            }
-        });
-    });
+function resetContentField() {
+    content.textContent = '';
 }
 
 function createBookCard(book) {
@@ -99,6 +86,36 @@ function createBookCard(book) {
     addCard.appendChild(removeCardButton);
 }
 
+function removeCard() {
+    const removeButton = document.querySelectorAll('#btn-remove');
+    removeButton.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const bookTitle = event.target.parentNode.firstChild.textContent;
+            // Remove the selected book from the myLibrarry
+            myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
+            updateBookCards(myLibrary);
+        });
+    });
+}
+
+function toggleStatus() {
+    const readButton = document.querySelectorAll('#btn-read');
+    readButton.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const card = event.target.parentNode;
+            if (card.classList.contains('card-read')) {
+                card.removeAttribute('class', 'card-read');
+                card.setAttribute('class', 'card card-unread');
+                button.textContent = 'Mark as read';
+            } else {
+                card.removeAttribute('class', 'card-unread');
+                card.setAttribute('class', 'card card-read');
+                button.textContent = 'Mark as unread';
+            }
+        });
+    });
+}
+
 function openPopUp() {
     popUpMenu.style.display = 'block';
     header.classList.add('inactive');
@@ -115,19 +132,15 @@ function closePopUp() {
     footer.classList.remove('inactive');
 }
 
-function resetContentField() {
-    content.textContent = '';
-}
-
-function getTheTitles(library) {
-    return library.map((book) => book.title);
-}
-
 function isExistBook(newBook) {
     let isExist = false;
     const booksTitle = getTheTitles(myLibrary);
     isExist = booksTitle.some((title) => title === newBook.title);
     return isExist;
+}
+
+function getTheTitles(library) {
+    return library.map((book) => book.title);
 }
 
 // --------- Event listeners --------- //
@@ -142,7 +155,7 @@ closeButton.addEventListener('click', () => {
     closePopUp();
 });
 
-// Pressed 'Submit button' sends book info
+// Pressed 'Submit button' get book inputs and add them to the library
 form.addEventListener('submit', (event) => {
     // default button action should not be taken
     // button does not let to 'submit' the page
