@@ -189,12 +189,12 @@ main {
 }
 
 
-#btn-read {
+.btn-read {
     margin-top: 2rem;
 }
 
-#btn-read,
-#btn-remove {
+.btn-read,
+.btn-remove {
     height: 3rem;
     width: 12rem;
 }
@@ -346,8 +346,8 @@ input {
 }
 
 #btn-submit,
-#btn-read,
-#btn-remove {
+.btn-read,
+.btn-remove {
     border: none;
     display: flex;
     justify-content: center;
@@ -365,14 +365,14 @@ input {
 }
 
 #btn-submit:hover,
-#btn-read:hover,
-#btn-remove:hover {
+.btn-read:hover,
+.btn-remove:hover {
     cursor: pointer;
     background-color: var(--button-submit-color-hover);
 }
 
 #btn-submit:active,
-#btn-read:active,
-#btn-remove:active {
+.btn-read:active,
+.btn-remove:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }

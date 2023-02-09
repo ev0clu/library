@@ -17,8 +17,6 @@ const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
 
 // --------- Functions declaration  --------- //
-
-// Constructor
 class Book {
     constructor(title, author, pages, isRead) {
         this.title = title;
@@ -37,20 +35,6 @@ function getBookInputs() {
     return newBook;
 }
 
-function addBookToLibrary(book) {
-    myLibrary.push(book);
-    updateBookCards(myLibrary);
-}
-
-function updateBookCards(library) {
-    resetContentField();
-    library.forEach((indexedBook) => {
-        createBookCard(indexedBook);
-    });
-    removeCard();
-    toggleStatus();
-}
-
 function resetContentField() {
     content.textContent = '';
 }
@@ -67,7 +51,7 @@ function createBookCard(book) {
     cardAuthor.textContent = `${book.author}`;
     cardPages.textContent = `${book.pages} pages read`;
 
-    isReadButton.setAttribute('id', 'btn-read');
+    isReadButton.setAttribute('class', 'btn-read');
 
     if (book.isRead) {
         addCard.setAttribute('class', `card card-read`);
@@ -77,7 +61,7 @@ function createBookCard(book) {
         isReadButton.textContent = 'Mark as read';
     }
 
-    removeCardButton.setAttribute('id', 'btn-remove');
+    removeCardButton.setAttribute('class', 'btn-remove');
     removeCardButton.textContent = 'Remove';
 
     content.appendChild(addCard);
@@ -88,20 +72,15 @@ function createBookCard(book) {
     addCard.appendChild(removeCardButton);
 }
 
-function removeCard() {
-    const removeButton = document.querySelectorAll('#btn-remove');
-    removeButton.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            const bookTitle = event.target.parentNode.firstChild.textContent;
-            // Remove the selected book from the myLibrarry
-            myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
-            updateBookCards(myLibrary);
-        });
+function updateBookCards(library) {
+    resetContentField();
+    library.forEach((indexedBook) => {
+        createBookCard(indexedBook);
     });
 }
 
 function toggleStatus() {
-    const readButton = document.querySelectorAll('#btn-read');
+    const readButton = document.querySelectorAll('.btn-read');
     readButton.forEach((button) => {
         button.addEventListener('click', (event) => {
             const card = event.target.parentNode;
@@ -116,6 +95,27 @@ function toggleStatus() {
             }
         });
     });
+}
+
+function removeCard() {
+    const removeButton = document.querySelectorAll('.btn-remove');
+    removeButton.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const bookTitle = event.target.parentNode.firstChild.textContent;
+            // Remove the selected book from the myLibrarry
+            myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
+            updateBookCards(myLibrary);
+            removeCard();
+            toggleStatus();
+        });
+    });
+}
+
+function addBookToLibrary(book) {
+    myLibrary.push(book);
+    updateBookCards(myLibrary);
+    removeCard();
+    toggleStatus();
 }
 
 function openPopUp() {
@@ -134,13 +134,13 @@ function closePopUp() {
     footer.classList.remove('inactive');
 }
 
+function getTheTitles(library) {
+    return library.map((book) => book.title);
+}
+
 function isExistBook(newBook) {
     const booksTitle = getTheTitles(myLibrary);
     return booksTitle.some((title) => title === newBook.title);
-}
-
-function getTheTitles(library) {
-    return library.map((book) => book.title);
 }
 
 // --------- Event listeners --------- //
