@@ -16,7 +16,7 @@ const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
 
-// --------- Functions declaration  --------- //
+// --------- Class declaration --------- //
 class Book {
     constructor(title, author, pages, isRead) {
         this.title = title;
@@ -24,6 +24,12 @@ class Book {
         this.pages = pages;
         this.isRead = isRead;
     }
+}
+
+// --------- Functions declaration  --------- //
+// Save to Local Storage
+function saveLocal() {
+    localStorage.setItem('Library', JSON.stringify(myLibrary));
 }
 
 function getBookInputs() {
@@ -39,8 +45,9 @@ function resetContentField() {
     content.textContent = '';
 }
 
-function createBookCard(book) {
+function createBookCard(book, index) {
     const addCard = document.createElement('div');
+    addCard.setAttribute('data-index', `${index}`);
     const cardTitle = document.createElement('h1');
     const cardAuthor = document.createElement('p');
     const cardPages = document.createElement('p');
@@ -74,25 +81,31 @@ function createBookCard(book) {
 
 function updateBookCards(library) {
     resetContentField();
-    library.forEach((indexedBook) => {
-        createBookCard(indexedBook);
-    });
+
+    for (let i = 0; i < library.length; i++) {
+        createBookCard(library[i], i);
+    }
 }
 
-function toggleStatus() {
+function toggleStatus(library) {
     const readButton = document.querySelectorAll('.btn-read');
     readButton.forEach((button) => {
         button.addEventListener('click', (event) => {
             const card = event.target.parentNode;
+            const bookIndex = card.dataset.index;
+            const myLib = library;
             if (card.classList.contains('card-read')) {
                 card.removeAttribute('class', 'card-read');
                 card.setAttribute('class', 'card card-unread');
                 button.textContent = 'Mark as read';
+                myLib[bookIndex].isRead = false;
             } else {
                 card.removeAttribute('class', 'card-unread');
                 card.setAttribute('class', 'card card-read');
                 button.textContent = 'Mark as unread';
+                myLib[bookIndex].isRead = true;
             }
+            saveLocal();
         });
     });
 }
@@ -104,18 +117,29 @@ function removeCard() {
             const bookTitle = event.target.parentNode.firstChild.textContent;
             // Remove the selected book from the myLibrarry
             myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
+            saveLocal();
             updateBookCards(myLibrary);
             removeCard();
-            toggleStatus();
+            toggleStatus(myLibrary);
         });
     });
 }
 
 function addBookToLibrary(book) {
     myLibrary.push(book);
-    updateBookCards(myLibrary);
-    removeCard();
-    toggleStatus();
+    saveLocal();
+}
+
+// Restore from Local Storage
+function restoreLocal() {
+    myLibrary = JSON.parse(localStorage.getItem('Library'));
+    if (myLibrary == null) {
+        myLibrary = [];
+    } else {
+        updateBookCards(myLibrary);
+        removeCard();
+        toggleStatus(myLibrary);
+    }
 }
 
 function openPopUp() {
@@ -167,5 +191,12 @@ form.addEventListener('submit', (event) => {
     } else {
         addBookToLibrary(newBook);
         closePopUp();
+
+        updateBookCards(myLibrary);
+        removeCard();
+        toggleStatus(myLibrary);
     }
 });
+
+// Restore myLibrary from Local Storage
+restoreLocal();
