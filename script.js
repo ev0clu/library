@@ -130,11 +130,24 @@ function addBookToLibrary(book) {
     saveLocal();
 }
 
+function initDefaultBooks() {
+    const book1 = new Book('Way of the Peaceful Warrior', 'Dan Millman', '216', true);
+    const book2 = new Book('Peaceful Heart, Warrior Spirit', 'Dan Millman', '143', false);
+    addBookToLibrary(book1);
+    addBookToLibrary(book2);
+}
+
 // Restore from Local Storage
 function restoreLocal() {
     myLibrary = JSON.parse(localStorage.getItem('Library'));
+
     if (myLibrary == null) {
+        // If localstorage is empty, add default books into the library
         myLibrary = [];
+        initDefaultBooks();
+        updateBookCards(myLibrary);
+        removeCard();
+        toggleStatus(myLibrary);
     } else {
         updateBookCards(myLibrary);
         removeCard();
