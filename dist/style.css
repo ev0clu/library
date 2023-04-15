@@ -132,6 +132,10 @@ table {
 }
 /* --- Reset end --- */
 
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --body-color: #fafafa;
     --header-color: #f8fafc;
@@ -158,20 +162,27 @@ header {
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-left: 7rem;
+    justify-content: space-between;
+    padding: 1rem 7rem 1rem 7rem;
     background-color: var(--header-color);
-    height: 7rem;
     font-size: 2.8rem;
     font-weight: 900;
     box-shadow: rgba(0, 0, 0, 0.08) 0px 4px 12px;
 }
 
-header > img {
-    max-height: 50%;
-    max-width: auto;
+.logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 3rem;
 }
 
-header > h1 {
+.logo img {
+    height: 90%;
+    width: auto;
+}
+
+.logo h1 {
     margin-left: 1rem;
     letter-spacing: 0.1rem;
 }
@@ -179,6 +190,29 @@ header > h1 {
 main {
     display: flex;
     flex-direction: column;
+}
+
+#btn-log {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: var(--button-add-color);
+    border-radius: 8px;
+    width: 6rem;
+    height: 2.5rem;
+}
+
+#btn-log:hover {
+    cursor: pointer;
+    background-color: var(--button-add-color-hover);
+}
+
+#btn-log:active {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .btn-add-container {
