@@ -1,8 +1,38 @@
+import { initializeApp } from 'firebase/app';
+import {
+    getAuth,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut
+} from 'firebase/auth';
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    query,
+    orderBy,
+    limit,
+    onSnapshot,
+    setDoc,
+    updateDoc,
+    doc
+} from 'firebase/firestore';
+
+import getFirebaseConfig from './firebase-config';
+
 // --------- Variable declarations  --------- //
 
 let myLibrary = [];
 
 // --------- Document methods --------- //
+const userPicElement = document.getElementById('user-pic');
+const userNameElement = document.getElementById('user-name');
+const signInButtonElement = document.getElementById('btn-sign-in');
+const signOutButtonElement = document.getElementById('btn-sign-out');
+
 const addButton = document.getElementById('btn-add');
 const closeButton = document.getElementById('btn-close');
 
@@ -15,6 +45,122 @@ const warning = document.getElementById('warning');
 const header = document.querySelector('.header');
 const main = document.querySelector('.main');
 const footer = document.querySelector('.footer');
+
+// Firebase
+
+const firebaseAppConfig = getFirebaseConfig();
+const app = initializeApp(firebaseAppConfig);
+const database = getFirestore(app);
+
+// Firebase Auth.
+async function signIn() {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(getAuth(), provider);
+}
+
+function signOutUser() {
+    signOut(getAuth());
+}
+
+function getProfilePicUrl() {
+    return getAuth().currentUser.photoURL || 'profile_placeholder.png';
+}
+
+function getUserName() {
+    return getAuth().currentUser.displayName;
+}
+
+function isUserSignedIn() {
+    return !!getAuth().currentUser;
+}
+
+function checkSignedInWithMessage() {
+    // Return true if the user is signed in Firebase
+    if (isUserSignedIn()) {
+        return true;
+    }
+
+    // Display a message to the user using a Toast.
+    alert('You must sign-in first');
+
+    return false;
+}
+
+function addSizeToGoogleProfilePic(url) {
+    if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
+        return url + '?sz=150';
+    }
+    return url;
+}
+
+// Triggers when the auth state change for instance when the user signs-in or signs-out.
+function authStateObserver(user) {
+    if (user) {
+        // User is signed in!
+        // Get the signed-in user's profile pic and name.
+        const profilePicUrl = getProfilePicUrl();
+        const userName = getUserName();
+
+        // Set the user's profile pic and name.
+        userPicElement.style.backgroundImage =
+            'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
+        userNameElement.textContent = userName;
+
+        // Show user's profile and sign-out button.
+        userNameElement.removeAttribute('hidden');
+        userPicElement.removeAttribute('hidden');
+        signOutButtonElement.removeAttribute('hidden');
+
+        // Hide sign-in button.
+        signInButtonElement.setAttribute('hidden', 'true');
+    } else {
+        // User is signed out!
+        // Hide user's profile and sign-out button.
+        userNameElement.setAttribute('hidden', 'true');
+        userPicElement.setAttribute('hidden', 'true');
+        signOutButtonElement.setAttribute('hidden', 'true');
+
+        // Show sign-in button.
+        signInButtonElement.removeAttribute('hidden');
+    }
+}
+
+function initFirebaseAuth() {
+    onAuthStateChanged(getAuth(), authStateObserver);
+}
+
+// Firebase operations
+
+async function getBooksFromFirebase(db) {
+    const bookCollection = collection(db, 'book');
+    const bookSnapshot = await getDocs(bookCollection);
+    const bookList = bookSnapshot.docs.map((doc) => doc.data());
+    return bookList;
+}
+
+async function deleteBookFromFirebase(book) {
+    await deleteDoc(doc(database, 'book', book));
+}
+
+async function saveBookToFirebase(book) {
+    // Add a new entry to the Firebase database.
+    try {
+        await setDoc(doc(database, 'book', book.title), {
+            title: book.title,
+            author: book.author,
+            pages: book.pages,
+            isRead: book.isRead
+        });
+    } catch (error) {
+        console.error('Error writing new book to Firebase Database', error);
+    }
+}
+
+async function toggleStatusFirebase(book, state) {
+    await updateDoc(doc(database, 'book', book.title), {
+        isRead: state
+    });
+}
 
 // --------- Class declaration --------- //
 class Book {
@@ -29,7 +175,7 @@ class Book {
 // --------- Functions declaration  --------- //
 // Save to Local Storage
 function saveLocal() {
-    localStorage.setItem('Library', JSON.stringify(myLibrary));
+    //localStorage.setItem('Library', JSON.stringify(myLibrary));
 }
 
 function getBookInputs() {
@@ -94,18 +240,20 @@ function toggleStatus(library) {
             const card = event.target.parentNode;
             const bookIndex = card.dataset.index;
             const myLib = library;
+            let state = false;
             if (card.classList.contains('card-read')) {
                 card.removeAttribute('class', 'card-read');
                 card.setAttribute('class', 'card card-unread');
                 button.textContent = 'Mark as read';
-                myLib[bookIndex].isRead = false;
+                state = false;
             } else {
                 card.removeAttribute('class', 'card-unread');
                 card.setAttribute('class', 'card card-read');
                 button.textContent = 'Mark as unread';
-                myLib[bookIndex].isRead = true;
+                state = true;
             }
-            saveLocal();
+            myLib[bookIndex].isRead = state;
+            toggleStatusFirebase(myLib[bookIndex], state);
         });
     });
 }
@@ -117,7 +265,7 @@ function removeCard() {
             const bookTitle = event.target.parentNode.firstChild.textContent;
             // Remove the selected book from the myLibrarry
             myLibrary = myLibrary.filter((book) => book.title !== bookTitle);
-            saveLocal();
+            deleteBookFromFirebase(bookTitle);
             updateBookCards(myLibrary);
             removeCard();
             toggleStatus(myLibrary);
@@ -125,9 +273,8 @@ function removeCard() {
     });
 }
 
-function addBookToLibrary(book) {
+async function addBookToLibrary(book) {
     myLibrary.push(book);
-    saveLocal();
 }
 
 function initDefaultBooks() {
@@ -135,13 +282,15 @@ function initDefaultBooks() {
     const book2 = new Book('Peaceful Heart, Warrior Spirit', 'Dan Millman', '143', false);
     addBookToLibrary(book1);
     addBookToLibrary(book2);
+    saveBookToFirebase(book1);
+    saveBookToFirebase(book2);
 }
 
-// Restore from Local Storage
-function restoreLocal() {
-    myLibrary = JSON.parse(localStorage.getItem('Library'));
+// Restore data from Firebase
+async function restoreFirebase() {
+    myLibrary = await getBooksFromFirebase(database);
 
-    if (myLibrary == null) {
+    if (!myLibrary.length) {
         // If localstorage is empty, add default books into the library
         myLibrary = [];
         initDefaultBooks();
@@ -181,6 +330,8 @@ function isExistBook(newBook) {
 }
 
 // --------- Event listeners --------- //
+signOutButtonElement.addEventListener('click', signOutUser);
+signInButtonElement.addEventListener('click', signIn);
 
 // Pressed 'Add button' open the Pop up menu
 addButton.addEventListener('click', () => {
@@ -208,8 +359,11 @@ form.addEventListener('submit', (event) => {
         updateBookCards(myLibrary);
         removeCard();
         toggleStatus(myLibrary);
+        if (checkSignedInWithMessage()) {
+            saveBookToFirebase(newBook);
+        }
     }
 });
 
-// Restore myLibrary from Local Storage
-restoreLocal();
+initFirebaseAuth();
+restoreFirebase();
