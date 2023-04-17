@@ -202,13 +202,23 @@ header h1 {
     font-size: 1.2rem;
 }
 
+#user-pic {
+    height: 1rem;
+    width: auto;
+}
+
 main {
     display: flex;
     flex-direction: column;
 }
-/*
-#btn-sign-in,
-#btn-sign-out {
+
+.inactive {
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.2); /* Black w/ opacity */
+}
+
+.btn-sign-in,
+.btn-sign-out {
     border: none;
     display: flex;
     justify-content: center;
@@ -220,14 +230,16 @@ main {
     border-radius: 8px;
     width: 6rem;
     height: 2.5rem;
-}*/
+}
 
-#btn-log:hover {
+.btn-sign-in:hover,
+.btn-sign-out:hover {
     cursor: pointer;
     background-color: var(--button-add-color-hover);
 }
 
-#btn-log:active {
+.btn-sign-out:active,
+.btn-sign-out:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -239,7 +251,7 @@ main {
     padding: 1.5rem;
 }
 
-#btn-add {
+.btn-add {
     border: none;
     display: flex;
     justify-content: center;
@@ -253,21 +265,21 @@ main {
     height: 2.5rem;
 }
 
-#btn-add:hover {
+.btn-add:hover {
     cursor: pointer;
     background-color: var(--button-add-color-hover);
 }
 
-#btn-add:active {
+.btn-add:active {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-#btn-add .material-symbols-outlined,
+.btn-add .material-symbols-outlined,
 #btn-close .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 18;
 }
 
-#btn-add .material-symbols-outlined {
+.btn-add .material-symbols-outlined {
     font-size: 1.8rem;
 }
 

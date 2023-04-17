@@ -13,6 +13,7 @@ import {
     getDocs,
     deleteDoc,
     query,
+    where,
     orderBy,
     limit,
     onSnapshot,
@@ -30,10 +31,10 @@ let myLibrary = [];
 // --------- Document methods --------- //
 const userPicElement = document.getElementById('user-pic');
 const userNameElement = document.getElementById('user-name');
-const signInButtonElement = document.getElementById('btn-sign-in');
-const signOutButtonElement = document.getElementById('btn-sign-out');
+const signInButtonElement = document.querySelector('.btn-sign-in');
+const signOutButtonElement = document.querySelector('.btn-sign-out');
 
-const addButton = document.getElementById('btn-add');
+const addButton = document.querySelector('.btn-add');
 const closeButton = document.getElementById('btn-close');
 
 const form = document.getElementById('form-content');
@@ -70,6 +71,10 @@ function getUserName() {
     return getAuth().currentUser.displayName;
 }
 
+function getUserId() {
+    return getAuth().currentUser.uid;
+}
+
 function isUserSignedIn() {
     return !!getAuth().currentUser;
 }
@@ -96,6 +101,7 @@ function addSizeToGoogleProfilePic(url) {
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
     if (user) {
+        restoreFirebase();
         // User is signed in!
         // Get the signed-in user's profile pic and name.
         const profilePicUrl = getProfilePicUrl();
@@ -106,22 +112,27 @@ function authStateObserver(user) {
             'url(' + addSizeToGoogleProfilePic(profilePicUrl) + ')';
         userNameElement.textContent = userName;
 
-        // Show user's profile and sign-out button.
-        userNameElement.removeAttribute('hidden');
-        userPicElement.removeAttribute('hidden');
-        signOutButtonElement.removeAttribute('hidden');
+        // Show user's profile
+        userNameElement.style.display = 'block';
+        userPicElement.style.display = 'block';
 
-        // Hide sign-in button.
-        signInButtonElement.setAttribute('hidden', 'true');
+        // Hide sign-in button and show sign-out button
+        signInButtonElement.style.display = 'none';
+        signOutButtonElement.style.display = 'flex';
+
+        addButton.classList.remove('inactive');
     } else {
+        resetContentField();
         // User is signed out!
-        // Hide user's profile and sign-out button.
-        userNameElement.setAttribute('hidden', 'true');
-        userPicElement.setAttribute('hidden', 'true');
-        signOutButtonElement.setAttribute('hidden', 'true');
+        // Hide user's profile
+        userNameElement.style.display = 'none';
+        userPicElement.style.display = 'none';
 
-        // Show sign-in button.
-        signInButtonElement.removeAttribute('hidden');
+        // Show sign-in button  and sign-out button.
+        signInButtonElement.style.display = 'flex';
+        signOutButtonElement.style.display = 'none';
+
+        addButton.classList.add('inactive');
     }
 }
 
@@ -133,8 +144,10 @@ function initFirebaseAuth() {
 
 async function getBooksFromFirebase(db) {
     const bookCollection = collection(db, 'book');
-    const bookSnapshot = await getDocs(bookCollection);
+    const querryBookCollection = query(bookCollection, where('userId', '==', getUserId()));
+    const bookSnapshot = await getDocs(querryBookCollection);
     const bookList = bookSnapshot.docs.map((doc) => doc.data());
+
     return bookList;
 }
 
@@ -146,6 +159,7 @@ async function saveBookToFirebase(book) {
     // Add a new entry to the Firebase database.
     try {
         await setDoc(doc(database, 'book', book.title), {
+            userId: getUserId(),
             title: book.title,
             author: book.author,
             pages: book.pages,
@@ -291,7 +305,7 @@ async function restoreFirebase() {
     myLibrary = await getBooksFromFirebase(database);
 
     if (!myLibrary.length) {
-        // If localstorage is empty, add default books into the library
+        // If storage is empty, add default books into the library
         myLibrary = [];
         initDefaultBooks();
         updateBookCards(myLibrary);
@@ -366,4 +380,3 @@ form.addEventListener('submit', (event) => {
 });
 
 initFirebaseAuth();
-restoreFirebase();
