@@ -10,7 +10,7 @@ A small library has built where you can create a collection of books that you've
 -   Remove book
 -   Change the read status of book
 -   Inactivate the background during pop up menu
--   Store data in Local Storage
+-   Store data in Firebase
 
 ### Layout
 
