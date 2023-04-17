@@ -1,16 +1,16 @@
 {
-    "hosting": {
-        "public": "./dist",
+  "hosting": {
+    "public": "./dist",
+    "headers": [
+      {
+        "source": "**/*.@(js|html)",
         "headers": [
-            {
-                "source": "**/*.@(js|html)",
-                "headers": [
-                    {
-                        "key": "Cache-Control",
-                        "value": "max-age=0"
-                    }
-                ]
-            }
+          {
+            "key": "Cache-Control",
+            "value": "max-age=0"
+          }
         ]
-    }
+      }
+    ]
+  }
 }
