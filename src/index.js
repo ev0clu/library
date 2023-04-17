@@ -9,13 +9,10 @@ import {
 import {
     getFirestore,
     collection,
-    addDoc,
     getDocs,
     deleteDoc,
     query,
     where,
-    orderBy,
-    limit,
     onSnapshot,
     setDoc,
     updateDoc,
@@ -187,11 +184,6 @@ class Book {
 }
 
 // --------- Functions declaration  --------- //
-// Save to Local Storage
-function saveLocal() {
-    //localStorage.setItem('Library', JSON.stringify(myLibrary));
-}
-
 function getBookInputs() {
     const title = document.getElementById('title').value;
     const author = document.getElementById('author').value;
