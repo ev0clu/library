@@ -283,26 +283,12 @@ async function addBookToLibrary(book) {
     myLibrary.push(book);
 }
 
-function initDefaultBooks() {
-    const book1 = new Book('Way of the Peaceful Warrior', 'Dan Millman', '216', true);
-    const book2 = new Book('Peaceful Heart, Warrior Spirit', 'Dan Millman', '143', false);
-    addBookToLibrary(book1);
-    addBookToLibrary(book2);
-    saveBookToFirebase(book1);
-    saveBookToFirebase(book2);
-}
-
 // Restore data from Firebase
 async function restoreFirebase() {
     myLibrary = await getBooksFromFirebase(database);
 
     if (!myLibrary.length) {
-        // If storage is empty, add default books into the library
         myLibrary = [];
-        initDefaultBooks();
-        updateBookCards(myLibrary);
-        removeCard();
-        toggleStatus(myLibrary);
     } else {
         updateBookCards(myLibrary);
         removeCard();
