@@ -12,6 +12,11 @@ A small library has built where you can create a collection of books that you've
 -   Inactivate the background during pop up menu
 -   Store data in Firebase
 
+### Developement dependencies
+
+-   [Webpack](https://webpack.js.org/)
+-   [Firebase](https://firebase.google.com/)
+
 ### Layout
 
 ![layout picture 1](https://github.com/ev0clu/library/blob/main/layout1.png?raw=true)
